@@ -411,7 +411,7 @@ p.plot(figsize=(15, 3), rot=30)
 
 # ### Seaborn 으로 시각화 해보기
 
-# In[43]:
+# In[42]:
 
 
 # 라이브러리 로드하기
@@ -420,7 +420,7 @@ import seaborn as sns
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[52]:
+# In[43]:
 
 
 # barplot으로 지역별 평당분양가격을 그려봅니다.
@@ -428,14 +428,14 @@ plt.figure(figsize=(10, 3))
 sns.barplot(data=df_last, x="지역명", y="평당분양가격")
 
 
-# In[49]:
+# In[44]:
 
 
 # barplot으로 연도별 평당분양가격을 그려봅니다.
 sns.barplot(data=df_last, x="연도", y="평당분양가격")
 
 
-# In[64]:
+# In[45]:
 
 
 # catplot 으로 서브플롯 그리기
@@ -444,7 +444,7 @@ sns.catplot(data=df_last, x="연도", y="평당분양가격", kind="bar", col="�
 
 # https://stackoverflow.com/questions/30490740/move-legend-outside-figure-in-seaborn-tsplot
 
-# In[56]:
+# In[46]:
 
 
 # lineplot으로 연도별 평당분양가격을 그려봅니다.
@@ -454,7 +454,7 @@ sns.lineplot(data=df_last, x="연도", y="평당분양가격", hue="지역명")
 plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
 
 
-# In[60]:
+# In[47]:
 
 
 # relplot 으로 서브플롯 그리기
@@ -464,7 +464,7 @@ sns.relplot(data=df_last, x="연도", y="평당분양가격",
 
 # ### boxplot과 violinplot
 
-# In[67]:
+# In[48]:
 
 
 # 연도별 평당분양가격을 boxplot으로 그려봅니다.
@@ -476,7 +476,7 @@ sns.relplot(data=df_last, x="연도", y="평당분양가격",
 sns.boxplot(data=df_last, x="연도", y="평당분양가격")
 
 
-# In[69]:
+# In[49]:
 
 
 # hue옵션을 주어 전용면적별로 다르게 표시해 봅니다.
@@ -484,7 +484,7 @@ plt.figure(figsize=(12, 3))
 sns.boxplot(data=df_last, x="연도", y="평당분양가격", hue="전용면적")
 
 
-# In[71]:
+# In[50]:
 
 
 # 연도별 평당분양가격을 violinplot으로 그려봅니다.
@@ -493,7 +493,7 @@ sns.violinplot(data=df_last, x="연도", y="평당분양가격")
 
 # ### lmplot과 swarmplot 
 
-# In[74]:
+# In[51]:
 
 
 # 연도별 평당분양가격을 lmplot으로 그려봅니다. 
@@ -501,7 +501,7 @@ sns.violinplot(data=df_last, x="연도", y="평당분양가격")
 sns.lmplot(data=df_last, x="연도", y="평당분양가격", hue="전용면적", col="전용면적", col_wrap=3)
 
 
-# In[77]:
+# In[52]:
 
 
 # 연도별 평당분양가격을 swarmplot 으로 그려봅니다. 
@@ -512,21 +512,21 @@ sns.swarmplot(data=df_last, x="연도", y="평당분양가격", hue="전용면�
 
 # ### 이상치 보기
 
-# In[80]:
+# In[53]:
 
 
 # 평당분양가격의 최대값을 구해서 max_price 라는 변수에 담습니다.
 df_last["평당분양가격"].describe()
 
 
-# In[81]:
+# In[54]:
 
 
 max_price = df_last["평당분양가격"].max()
 max_price
 
 
-# In[82]:
+# In[55]:
 
 
 # 서울의 평당분양가격이 특히 높은 데이터가 있습니다. 해당 데이터를 가져옵니다.
@@ -539,14 +539,13 @@ df_last[df_last["평당분양가격"] == max_price]
 # 따라서 결측치가 아닌 데이터만 따로 모아서 평당분양가격을 시각화하기 위한 데이터를 만듭니다.
 # 데이터프레임의 .loc를 활용하여 결측치가 없는 데이터에서 평당분양가격만 가져옵니다.
 
-# In[90]:
+# In[56]:
 
 
 h = df_last["평당분양가격"].hist(bins=10)
 
 
-
-# In[94]:
+# In[57]:
 
 
 # 결측치가 없는 데이터에서 평당분양가격만 가져옵니다. 그리고 price라는 변수에 담습니다.
@@ -555,14 +554,14 @@ h = df_last["평당분양가격"].hist(bins=10)
 price = df_last.loc[df_last["평당분양가격"].notnull(), "평당분양가격"]
 
 
-# In[95]:
+# In[58]:
 
 
 # distplot으로 평당분양가격을 표현해 봅니다.
 sns.distplot(price)
 
 
-# In[100]:
+# In[59]:
 
 
 # sns.distplot(price, hist=False, rug=True)
@@ -573,7 +572,7 @@ sns.kdeplot(price, cumulative=True)
 # * https://seaborn.pydata.org/tutorial/axis_grids.html#conditional-small-multiples
 # * https://seaborn.pydata.org/examples/kde_ridgeplot.html
 
-# In[98]:
+# In[60]:
 
 
 # subplot 으로 표현해 봅니다.
@@ -582,7 +581,7 @@ g = sns.FacetGrid(df_last, row="지역명",
 g.map(sns.distplot, "평당분양가격", hist=False, rug=True)
 
 
-# In[104]:
+# In[61]:
 
 
 # pairplot
@@ -591,7 +590,7 @@ df_last_notnull = df_last.loc[df_last["평당분양가격"].notnull(),
 sns.pairplot(df_last_notnull, hue="전용면적")
 
 
-# In[108]:
+# In[62]:
 
 
 # 규모구분(전용면적)별로 value_counts를 사용해서 데이터를 집계해 봅니다.
@@ -600,35 +599,35 @@ df_last["전용면적"].value_counts()
 
 # ## 2015년 8월 이전 데이터 보기
 
-# In[110]:
+# In[63]:
 
 
 # 모든 컬럼이 출력되게 설정합니다.
 pd.options.display.max_columns = 25
 
 
-# In[119]:
+# In[64]:
 
 
 # head 로 미리보기를 합니다.
 df_last.head()
 
 
-# In[120]:
+# In[65]:
 
 
 # head 로 미리보기를 합니다.
 df_first.head()
 
 
-# In[115]:
+# In[66]:
 
 
 # df_first 변수에 담겨있는 데이터프레임의 정보를 info를 통해 봅니다.
 df_first.info()
 
 
-# In[117]:
+# In[67]:
 
 
 # 결측치가 있는지 봅니다.
@@ -644,14 +643,14 @@ df_first.isnull().sum()
 # * https://pandas.pydata.org/docs/user_guide/reshaping.html#reshaping-by-melt
 # * [Tidy Data 란?](https://vita.had.co.nz/papers/tidy-data.pdf)
 
-# In[121]:
+# In[68]:
 
 
 # head 로 미리보기 합니다.
 df_first.head(1)
 
 
-# In[126]:
+# In[69]:
 
 
 # pd.melt 를 사용하며, 녹인 데이터는 df_first_melt 변수에 담습니다. 
@@ -659,7 +658,7 @@ df_first.melt = df_first.melt(id_vars="지역", var_name="기간", value_name="�
 df_first.melt.head()
 
 
-# In[128]:
+# In[70]:
 
 
 # df_first_melt 변수에 담겨진 컬럼의 이름을 
@@ -671,35 +670,35 @@ df_first.melt.head(1)
 # ### 연도와 월을 분리하기
 # * pandas 의 string-handling 사용하기 : https://pandas.pydata.org/pandas-docs/stable/reference/series.html#string-handling
 
-# In[129]:
+# In[71]:
 
 
 date = "2013년12월"
 date
 
 
-# In[130]:
+# In[72]:
 
 
 # split 을 통해 "년"을 기준으로 텍스트를 분리해 봅니다.
 date.split("년")
 
 
-# In[131]:
+# In[73]:
 
 
 # 리스트의 인덱싱을 사용해서 연도만 가져옵니다.
 date.split("년")[0]
 
 
-# In[132]:
+# In[74]:
 
 
 # 리스트의 인덱싱과 replace를 사용해서 월을 제거합니다.
 date.split("년")[-1].replace("월", "")
 
 
-# In[135]:
+# In[75]:
 
 
 # parse_year라는 함수를 만듭니다.
@@ -713,14 +712,14 @@ print(type(y))
 y
 
 
-# In[136]:
+# In[76]:
 
 
 # 제대로 분리가 되었는지 parse_year 함수를 확인합니다.
 parse_year(date)
 
 
-# In[137]:
+# In[77]:
 
 
 # parse_month 라는 함수를 만듭니다.
@@ -730,14 +729,14 @@ def parse_month(date):
     return month
 
 
-# In[138]:
+# In[78]:
 
 
 # 제대로 분리가 되었는지 parse_month 함수를 확인합니다.
 parse_month(date)
 
 
-# In[139]:
+# In[79]:
 
 
 # df_first_melt 변수에 담긴 데이터프레임에서 
@@ -746,7 +745,7 @@ df_first.melt["연도"] = df_first.melt["기간"].apply(parse_year)
 df_first.melt.head(1)
 
 
-# In[140]:
+# In[80]:
 
 
 # df_first_melt 변수에 담긴 데이터프레임에서 
@@ -755,7 +754,7 @@ df_first.melt["월"] = df_first.melt["기간"].apply(parse_month)
 df_first.melt.head(1)
 
 
-# In[145]:
+# In[81]:
 
 
 # 컬럼명을 리스트로 만들때 버전에 따라 tolist() 로 동작하기도 합니다.
@@ -763,7 +762,7 @@ df_first.melt.head(1)
 df_last.columns.to_list()
 
 
-# In[141]:
+# In[82]:
 
 
 # df_last와 병합을 하기 위해서는 컬럼의 이름이 같아야 합니다.
@@ -771,14 +770,14 @@ df_last.columns.to_list()
 df_last.sample()
 
 
-# In[146]:
+# In[83]:
 
 
 cols = ['지역명', '연도', '월', '평당분양가격']
 cols
 
 
-# In[150]:
+# In[84]:
 
 
 # 최근 데이터가 담긴 df_last 에는 전용면적이 있습니다. 
@@ -788,7 +787,7 @@ df_last_prepare = df_last.loc[df_last["전용면적"] == "전체", cols].copy()
 df_last_prepare.head(1)
 
 
-# In[152]:
+# In[85]:
 
 
 # df_first_melt에서 공통된 컬럼만 가져온 뒤
@@ -800,7 +799,7 @@ df_first_prepare.head(1)
 # ### concat 으로 데이터 합치기
 # * https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html
 
-# In[154]:
+# In[86]:
 
 
 # df_first_prepare 와 df_last_prepare 를 합쳐줍니다.
@@ -808,15 +807,177 @@ df = pd.concat([df_first_prepare, df_last_prepare])
 df.shape
 
 
-# In[155]:
+# In[87]:
 
 
 # 제대로 합쳐졌는지 미리보기를 합니다.
 df.head()
 
 
-# In[157]:
+# In[88]:
 
 
 # 연도별로 데이터가 몇개씩 있는지 value_counts를 통해 세어봅니다.
 df["연도"].value_counts(sort=False)
+
+
+# ### pivot_table 사용하기
+# * https://pandas.pydata.org/docs/user_guide/reshaping.html#reshaping-and-pivot-tables
+
+# In[89]:
+
+
+# 연도를 인덱스로, 지역명을 컬럼으로 평당분양가격을 피봇테이블로 그려봅니다.
+t = pd.pivot_table(df, index="연도", columns="지역명", values="평당분양가격").round()
+t
+
+
+# In[90]:
+
+
+# 위에서 그린 피봇테이블을 히트맵으로 표현해 봅니다.
+plt.figure(figsize=(15,7))
+sns.heatmap(t, cmap="Blues", annot=True, fmt=".0f")
+
+
+# In[91]:
+
+
+# transpose 를 사용하면 행과 열을 바꿔줄 수 있습니다.
+t.transpose()
+
+
+# In[92]:
+
+
+# 바뀐 행과 열을 히트맵으로 표현해 봅니다.
+plt.figure(figsize=(15,7))
+sns.heatmap(t.T, cmap="Blues", annot=True, fmt=".0f")
+
+
+# In[93]:
+
+
+# Groupby로 그려봅니다. 인덱스에 ["연도", "지역명"] 을 넣고 그려봅니다.
+g = df.groupby(["연도", "지역명"])["평당분양가격"].mean().unstack().round()
+g
+
+
+# In[94]:
+
+
+plt.figure(figsize=(15, 7))
+sns.heatmap(g.T, annot=True, fmt=".0f", cmap="Greens")
+
+
+# ## 2013년부터 최근 데이터까지 시각화하기
+# ### 연도별 평당분양가격 보기
+
+# In[95]:
+
+
+# barplot 으로 연도별 평당분양가격 그리기
+sns.barplot(data=df, x="연도", y="평당분양가격")
+
+
+# In[96]:
+
+
+# pointplot 으로 연도별 평당분양가격 그리기
+plt.figure(figsize=(12,4))
+sns.pointplot(data=df, x="연도", y="평당분양가격", hue="지역명")
+plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
+
+
+# In[98]:
+
+
+# 서울만 barplot 으로 그리기
+df_seoul = df[df["지역명"] == "서울"].copy()
+print(df_seoul.shape)
+
+sns.barplot(data=df_seoul, x="연도", y="평당분양가격", color="b")
+sns.pointplot(data=df_seoul, x="연도", y="평당분양가격")
+
+
+# In[99]:
+
+
+# 연도별 평당분양가격 boxplot 그리기
+sns.boxplot(data=df, x="연도", y="평당분양가격")
+
+
+# In[100]:
+
+
+sns.boxenplot(data=df, x="연도", y="평당분양가격")
+
+
+# In[102]:
+
+
+# 연도별 평당분양가격 violinplot 그리기
+plt.figure(figsize=(10,4))
+sns.violinplot(data=df, x="연도", y="평당분양가격")
+
+
+# In[108]:
+
+
+# 연도별 평당분양가격 swarmplot 그리기
+plt.figure(figsize=(12, 5))
+sns.swarmplot(data=df, x="연도", y="평당분양가격", hue="지역명")
+plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
+
+
+# In[109]:
+
+
+plt.figure(figsize=(12, 5))
+sns.violinplot(data=df, x="연도", y="평당분양가격")
+sns.swarmplot(data=df, x="연도", y="평당분양가격", hue="지역명")
+plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
+
+
+# ### 지역별 평당분양가격 보기
+
+# In[111]:
+
+
+# barplot 으로 지역별 평당분양가격을 그려봅니다.
+plt.figure(figsize=(12,4))
+sns.barplot(data=df, x="지역명", y="평당분양가격")
+
+
+# In[113]:
+
+
+# boxplot 으로 지역별 평당분양가격을 그려봅니다.
+plt.figure(figsize=(12,4))
+sns.boxplot(data=df, x="지역명", y="평당분양가격")
+
+
+# In[114]:
+
+
+plt.figure(figsize=(12,4))
+sns.boxenplot(data=df, x="지역명", y="평당분양가격")
+
+
+# In[116]:
+
+
+# violinplot 으로 지역별 평당분양가격을 그려봅니다.
+plt.figure(figsize=(24,4))
+sns.violinplot(data=df, x="지역명", y="평당분양가격")
+
+
+# In[119]:
+
+
+# swarmplot 으로 지역별 평당분양가격을 그려봅니다.
+plt.figure(figsize=(24,4))
+sns.swarmplot(data=df, x="지역명", y="평당분양가격", hue="연도")
+
+
+
