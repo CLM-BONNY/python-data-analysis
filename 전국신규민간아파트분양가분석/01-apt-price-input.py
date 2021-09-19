@@ -889,7 +889,7 @@ sns.pointplot(data=df, x="연도", y="평당분양가격", hue="지역명")
 plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
 
 
-# In[98]:
+# In[97]:
 
 
 # 서울만 barplot 으로 그리기
@@ -900,20 +900,20 @@ sns.barplot(data=df_seoul, x="연도", y="평당분양가격", color="b")
 sns.pointplot(data=df_seoul, x="연도", y="평당분양가격")
 
 
-# In[99]:
+# In[98]:
 
 
 # 연도별 평당분양가격 boxplot 그리기
 sns.boxplot(data=df, x="연도", y="평당분양가격")
 
 
-# In[100]:
+# In[99]:
 
 
 sns.boxenplot(data=df, x="연도", y="평당분양가격")
 
 
-# In[102]:
+# In[100]:
 
 
 # 연도별 평당분양가격 violinplot 그리기
@@ -921,7 +921,7 @@ plt.figure(figsize=(10,4))
 sns.violinplot(data=df, x="연도", y="평당분양가격")
 
 
-# In[108]:
+# In[101]:
 
 
 # 연도별 평당분양가격 swarmplot 그리기
@@ -930,7 +930,7 @@ sns.swarmplot(data=df, x="연도", y="평당분양가격", hue="지역명")
 plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
 
 
-# In[109]:
+# In[102]:
 
 
 plt.figure(figsize=(12, 5))
@@ -941,7 +941,7 @@ plt.legend(bbox_to_anchor=(1.02, 1), loc=2, borderaxespad=0.)
 
 # ### 지역별 평당분양가격 보기
 
-# In[111]:
+# In[103]:
 
 
 # barplot 으로 지역별 평당분양가격을 그려봅니다.
@@ -949,7 +949,7 @@ plt.figure(figsize=(12,4))
 sns.barplot(data=df, x="지역명", y="평당분양가격")
 
 
-# In[113]:
+# In[104]:
 
 
 # boxplot 으로 지역별 평당분양가격을 그려봅니다.
@@ -957,14 +957,14 @@ plt.figure(figsize=(12,4))
 sns.boxplot(data=df, x="지역명", y="평당분양가격")
 
 
-# In[114]:
+# In[105]:
 
 
 plt.figure(figsize=(12,4))
 sns.boxenplot(data=df, x="지역명", y="평당분양가격")
 
 
-# In[116]:
+# In[106]:
 
 
 # violinplot 으로 지역별 평당분양가격을 그려봅니다.
@@ -972,12 +972,10 @@ plt.figure(figsize=(24,4))
 sns.violinplot(data=df, x="지역명", y="평당분양가격")
 
 
-# In[119]:
+# In[107]:
 
 
 # swarmplot 으로 지역별 평당분양가격을 그려봅니다.
 plt.figure(figsize=(24,4))
 sns.swarmplot(data=df, x="지역명", y="평당분양가격", hue="연도")
-
-
 
