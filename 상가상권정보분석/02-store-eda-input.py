@@ -8,6 +8,25 @@
 # * 소상공인 상권정보 상가업소 데이터
 # * 영상에 사용한 데이터셋 다운로드 : http://bit.ly/open-data-set-folder
 # 
+# ### 데이터셋을 엑셀에서 열어보는 방법
+# 
+# ```
+# MS엑셀(Excel)에서 UTF-8로 된 CSV파일 불러오기 
+#  ◦  기존 euc-kr 데이터 추출형식으로 인해 업소명 오류가 발견되었으며 이를 개선하고자 UTF-8 형식으로 추출하였습니다.
+#  ◦ 개발자가 아닌 일반사용자의 경우 euc-kr(UTF-8 이나 UTF-16)이 아닌 CSV파일을 엑셀에서 바로 열면 한글이 모두 깨지게 됩니다.
+#  
+#  ◦ 바로 열지 마시고 다음 절차를 거치시기 바랍니다. 
+#    - 엑셀을 실행하고 데이터 → 텍스트를 선택합니다.
+#    - 가져올 파일을 선택하고 확인을 클릭합니다.
+#    - 콤보 박스에서 적절한 코드 타입이 선택됐는지 확인합니다. 
+#      * UTF-8의 코드 페이지 넘버는 65001입니다.
+#  
+#    - 원본 데이터 파일 유형을 ‘구분 기호로 분리됨’ 선택합니다. 
+#    - 기타 ‘|’(파이프) 입력, 3단계 텍스트로 선택합니다.  
+#      * 단, 지번코드, 건물관리번호, 신우편번호, 경도, 위도 등 행마다 텍스트 선택   
+#   
+# ``` 
+# 
 # ### 데이터셋 분류 지역
 # * 이 튜토리얼에서는 1번 파일만 사용합니다.
 # 
@@ -62,7 +81,7 @@ pd.Series([-4, 1, 0, 3, -2, 4, 5]).plot(title="한글폰트 설정")
 
 
 # 파일을 로드합니다.
-df = pd.read_csv("C:/Users/alstj/상가상권정보/상가상권정보/상가업소정보_201912_01.csv", sep="|")
+df = pd.read_csv("C:/Users/alstj/상가상권정보/상가업소정보_201912_01.csv", sep="|")
 df.shape
 
 
@@ -921,3 +940,181 @@ g.index
 t = g.reset_index()
 t = t.rename(columns={"상호명":"상호수"})
 t
+
+
+# ### 같은 그래프를 seaborn 으로 그리기
+# <img src="https://pandas.pydata.org/pandas-docs/stable/_images/reshaping_melt.png">
+# 
+# 이미지 출처 : https://pandas.pydata.org/pandas-docs/stable/user_guide/reshaping.html
+
+# In[97]:
+
+
+# x축에 시군구명을 y축에 상호수를 막대그래프로 그립니다. 
+# 상권업종소분류명 으로 색상을 다르게 표현합니다.
+plt.figure(figsize=(15,4))
+sns.barplot(data=t, x="시군구명", y="상호수", ci=None)
+
+
+# In[98]:
+
+
+# x축에 상권업종소분류명을 y축에 상호수를 막대그래프로 그립니다. 
+# 시군구명 으로 색상을 다르게 표현합니다.
+plt.figure(figsize=(15,4))
+sns.barplot(data=t, x="상권업종소분류명", y="상호수", ci=None)
+
+
+# In[99]:
+
+
+# "상권업종소분류명"이 "학원-입시" 인 서브셋만 가져와서 시각화 합니다.
+academy_sub = t[t["상권업종소분류명"] == "학원-입시"].copy()
+print(academy_sub.shape)
+plt.figure(figsize=(15,4))
+sns.barplot(data=academy_sub, x="시군구명", y="상호수", ci=None)
+
+
+# In[100]:
+
+
+# catplot을 통해 서브플롯을 그립니다.
+plt.figure(figsize=(15,4))
+sns.catplot(data=t, x="상권업종소분류명", y="상호수", kind="bar", col="시군구명", col_wrap=4, sharex=False)
+
+
+# ### 경도와 위도를 scatterplot 으로 표현하기
+
+# In[101]:
+
+
+# scatterplot 으로 경도와 위도를 표현하고 시군구명으로 색상을 다르게 표현합니다.
+plt.figure(figsize=(10, 7))
+sns.scatterplot(data=df_academy_selected, x="경도", y="위도", hue="시군구명")
+
+
+# In[102]:
+
+
+# scatterplot 으로 경도와 위도를 표현하고 상권업종소분류명으로 색상을 다르게 표현합니다.
+plt.figure(figsize=(10, 7))
+sns.scatterplot(data=df_academy_selected, x="경도", y="위도", hue="상권업종소분류명")
+
+
+# In[103]:
+
+
+# "상권업종소분류명"이 "학원-입시" 인 데이터만 그려봅니다.
+plt.figure(figsize=(10, 7))
+sns.scatterplot(data=df_academy_selected[df_academy_selected["상권업종소분류명"] == "학원-입시"], x="경도", y="위도", hue="상권업종소분류명")
+
+
+# In[104]:
+
+
+# "상권업종소분류명"이 "어린이집" 인 데이터만 그려봅니다.
+plt.figure(figsize=(10, 7))
+sns.scatterplot(data=df_academy_selected[df_academy_selected["상권업종소분류명"] == "어린이집"], x="경도", y="위도", hue="상권업종소분류명")
+
+
+# In[105]:
+
+
+# 어린이집과 학원-입시를 비교해 봅니다.
+plt.figure(figsize=(10, 7))
+sns.scatterplot(data=df_academy_selected[df_academy_selected["상권업종소분류명"].isin(["어린이집", "학원-입시"])], x="경도", y="위도", hue="상권업종소분류명")
+
+
+# 
+# ## Folium 으로 지도 활용하기
+# * 다음의 프롬프트 창을 열어 conda 명령어로 설치합니다.
+# <img src="https://t1.daumcdn.net/cfile/tistory/99576B4A5B751DC902">
+# 
+# 검은색 프롬프트 창에 아래 명령어를 통해 folium 을 설치합니다.
+# 
+# 
+# `conda install -c conda-forge folium`
+# 
+# ### Folium 사용예제
+# * 예제목록 : http://nbviewer.jupyter.org/github/python-visualization/folium/tree/master/examples/
+# * Quickstart : https://nbviewer.jupyter.org/github/python-visualization/folium/blob/master/examples/Quickstart.ipynb
+
+# In[106]:
+
+
+# 위에서 그렸던 어린이집과 학원-입시에 대한 상호 데이터를 지도에 시각화 해봅니다.
+import folium
+
+
+# In[107]:
+
+
+# 경도와 위도의 평균을 구해서 long, lat 변수에 담습니다.
+long = df_academy_selected["경도"].mean()
+lat = df_academy_selected["위도"].mean()
+
+
+# In[108]:
+
+
+# "상권업종소분류명"에 "어린이집", "학원-입시"가 들어가는 데이터만 isin을 통해 가져옵니다.
+df_m = df_academy_selected[df_academy_selected["상권업종소분류명"].isin(["어린이집", "학원-입시"])]
+df_m = df_m.sample(1000)
+df_m.shape
+df_m.iloc[0]
+
+
+# In[109]:
+
+
+# folium 으로 Marker 를 지도로 표시해 봅니다.
+m = folium.Map(location=[37.669944, 127.046729], zoom_start=12)
+folium.Marker([37.669944, 127.046729], tooltip="한별키즈어린이집").add_to(m)
+m
+
+
+# In[110]:
+
+
+# html 파일로 저장해 봅니다.
+m.save('index.html')
+
+
+# In[111]:
+
+
+# loc를 통해 특정 상호명을 접근해 봅니다.
+df_m.loc[341338, "상호명"]
+
+
+# In[112]:
+
+
+# index 만 가져옵니다.
+df_m.index
+
+
+# In[113]:
+
+
+# for문으로 데이터프레임을 순회하며 원하는 값을 가져옵니다.
+for i in df_m.index[:10]:
+    tooltip = df_m.loc[i, "상호명"] +"-"+ df_m.loc[i, "도로명주소"]
+    lat = df_m.loc[i, "위도"] 
+    long = df_m.loc[i, "경도"] 
+    
+    print(tooltip, lat, long)
+
+
+# In[114]:
+
+
+# 위에서 작성해본 for문을 활용해 CircleMarker 로 표현해 봅니다.
+m = folium.Map(location=[37.669944, 127.046729], zoom_start=12, tiles='Stamen Toner')
+for i in df_m.index[:100]:
+    tooltip = df_m.loc[i, "상호명"] +"-"+ df_m.loc[i, "도로명주소"]
+    lat = df_m.loc[i, "위도"] 
+    long = df_m.loc[i, "경도"] 
+    folium.CircleMarker([lat, long], tooltip=tooltip, radius=3).add_to(m)
+m
+
