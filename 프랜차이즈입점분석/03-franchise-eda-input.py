@@ -327,3 +327,471 @@ df_31[df_31["상권업종대분류명"].isin(["소매", "생활서비스"])]
 # "상권업종대분류명"에서 "소매", "생활서비스"는 제외합니다.
 df_31 = df_31[~df_31["상권업종대분류명"].isin(["소매", "생활서비스"])].copy()
 df_31
+
+
+# ### 범주형 값으로 countplot 그리기
+
+# In[29]:
+
+
+# value_counts 로 "브랜드명"의 빈도수를 구합니다.
+brand_count = df_31["브랜드명"].value_counts()
+
+
+# In[30]:
+
+
+# normalize=True 로 빈도수의 비율을 구합니다.
+df_31["브랜드명"].value_counts(normalize=True).plot.barh()
+
+
+# In[31]:
+
+
+brand_count.index
+
+
+# In[32]:
+
+
+# countplot 을 그립니다.
+g = sns.countplot(data=df_31, x="브랜드명")
+for i,val in enumerate(brand_count.index):
+    g.text(x=i, y=brand_count[i], s=brand_count[i])
+
+
+# In[33]:
+
+
+# 시군구명으로 빈도수를 세고 브랜드명으로 색상을 다르게 표현하는 countplot 을 그립니다.
+plt.figure(figsize=(15, 4))
+g = sns.countplot(data=df_31, x="시군구명", hue="브랜드명")
+
+
+# ### scatterplot 그리기
+
+# * https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html#scatter-plot
+
+# In[34]:
+
+
+# Pandas 의 plot 으로 scatterplot 을 그립니다.
+df_31[["위도", "경도"]].plot.scatter(x="경도", y="위도")
+
+
+# In[35]:
+
+
+# seaborn의 scatterplot 으로 hue에 브랜드명을 지정해서 시각화 합니다.
+sns.scatterplot(data=df_31, x="경도", y="위도", hue="브랜드명")
+
+
+# In[36]:
+
+
+# 위에서 그렸던 그래프를 jointplot 으로 kind="hex" 을 사용해 그려봅니다.
+sns.jointplot(data=df_31, x="경도", y="위도", kind="hex")
+
+
+# ## Folium 으로 지도 활용하기
+# * 다음의 프롬프트 창을 열어 conda 명령어로 설치합니다.
+# <img src="https://i.imgur.com/x7pzfCP.jpg">
+# * <font color="red">주피터 노트북 상에서 설치가 되지 않으니</font> anaconda prompt 를 열어서 설치해 주세요.
+# 
+# 
+# * 윈도우
+#     * <font color="red">관리자 권한</font>으로 아나콘다를 설치하셨다면 다음의 방법으로 anaconda prompt 를 열어 주세요.
+#     <img src="https://i.imgur.com/GhoLwsd.png">
+# * 맥
+#     * terminal 프로그램을 열어 설치해 주세요. 
+# 
+# 
+# * 다음의 문서를 활용해서 지도를 표현합니다.
+# * https://nbviewer.jupyter.org/github/python-visualization/folium/blob/master/examples/Quickstart.ipynb
+# * Folium 사용예제 :
+# http://nbviewer.jupyter.org/github/python-visualization/folium/tree/master/examples/
+
+# In[37]:
+
+
+# 아나콘다에서 folium 을 사용하기 위해서는 별도의 설치가 필요
+# https://anaconda.org/conda-forge/folium
+# conda install -c conda-forge folium 
+# 지도 시각화를 위한 라이브러리
+import folium
+
+
+# In[38]:
+
+
+# 지도의 중심을 지정하기 위해 위도와 경도의 평균을 구합니다. 
+lat = df_31["위도"].mean()
+long = df_31["경도"].mean()
+lat, long
+
+
+# In[39]:
+
+
+# 샘플을 하나 추출해서 지도에 표시해 봅니다.
+m = folium.Map([lat, long])
+# 127.039032	37.495593
+folium.Marker([37.495593, 127.039032], popup="<i>던킨도너츠</i>", tooltip="던킨도너츠").add_to(m)
+m.save('index.html')
+m
+
+
+# In[40]:
+
+
+# folium 사용법을 보고 일부 데이터를 출력해 봅니다.
+df_31.sample(random_state=31)
+
+
+# In[41]:
+
+
+# html 파일로 저장하기
+# tooltip 의 한글이 깨져보인다면 html 파일로 저장해서 보세요.
+m.save('index.html')
+
+
+# ### 서울의 배스킨라빈스와 던킨도너츠 매장 분포
+# * 배스킨라빈스와 던킨도너츠 매장을 지도에 표현합니다.
+
+# In[42]:
+
+
+# 데이터프레임의 인덱스만 출력합니다.
+df_31.index
+
+
+# ### 기본 마커로 표현하기
+
+# In[43]:
+
+
+# icon=folium.Icon(color=icon_color) 로 아이콘 컬러를 변경합니다.
+m = folium.Map([lat, long], zoom_start=12)
+
+for i in df_31.index:
+    sub_lat = df_31.loc[i, "위도"]
+    sub_long = df_31.loc[i, "경도"]
+    title = df_31.loc[i, "상호명"] + "-" + df_31.loc[i, "도로명주소"]
+    
+    icon_color = "blue"
+    if df_31.loc[i, "브랜드명"] == "던킨도너츠":
+        icon_color = "red"
+    
+    folium.Marker([sub_lat, sub_long], 
+                  icon=folium.Icon(color=icon_color), 
+                  popup=f"<i>{title}/i>",
+                  tooltip=title).add_to(m)
+    
+m.save('index.html')
+m
+
+
+# ### MarkerCluster 로 표현하기
+# * https://nbviewer.jupyter.org/github/python-visualization/folium/blob/master/examples/MarkerCluster.ipynb
+
+# In[44]:
+
+
+# icon=folium.Icon(color=icon_color) 로 아이콘 컬러를 변경합니다.
+from folium.plugins import MarkerCluster
+
+m = folium.Map([lat, long], zoom_start=12)
+marker_cluster = MarkerCluster().add_to(m)
+
+for i in df_31.index:
+    sub_lat = df_31.loc[i, "위도"]
+    sub_long = df_31.loc[i, "경도"]
+    title = df_31.loc[i, "상호명"] + "-" + df_31.loc[i, "도로명주소"]
+    
+    icon_color = "blue"
+    if df_31.loc[i, "브랜드명"] == "던킨도너츠":
+        icon_color = "red"
+    
+    folium.Marker(
+        [sub_lat, sub_long], 
+        icon=folium.Icon(color=icon_color), 
+        popup=f"<i>{title}/i>",
+        tooltip=title).add_to(marker_cluster)
+    
+m.save('index.html')
+m
+
+
+# ## 파리바게뜨와 뚜레주르 분석하기
+
+# ### 데이터 색인으로 가져오기
+
+# In[45]:
+
+
+df_seoul["상호명"].str.extract("뚜레(주|쥬)르")[0].value_counts()
+
+
+# In[46]:
+
+
+# str.contains 를 사용해서 뚜레(주|쥬)르|파리(바게|크라상) 으로 상호명을 찾습니다.
+# df_bread 라는 데이터프레임에 담습니다.
+df_bread = df_seoul[df_seoul["상호명"].str.contains("뚜레(주|쥬)르|파리(바게|크라상)")].copy()
+df_bread.shape
+
+
+# ### 가져온 데이터가 맞는지 확인하기
+
+# In[47]:
+
+
+# 잘못 가져온 데이터가 있는지 확인합니다.
+df_bread["상권업종대분류명"].value_counts()
+
+
+# In[48]:
+
+
+# 제과점과 상관 없을 것 같은 상점을 추출합니다.
+df_bread[df_bread["상권업종대분류명"] == "학문/교육"]
+
+
+# In[49]:
+
+
+# "상권업종대분류명"이 "학문/교육"이 아닌 것만 가져옵니다.
+print(df_bread.shape)
+df_bread = df_bread[df_bread["상권업종대분류명"] != "학문/교육"]
+print(df_bread.shape)
+
+
+# In[50]:
+
+
+# 상호명의 unique 값을 봅니다.
+df_bread["상호명"].unique()
+
+
+# In[51]:
+
+
+# 상호명이 '파스쿠찌|잠바주스'가 아닌 것만 가져오세요.
+print(df_bread.shape)
+df_bread = df_bread[~df_bread["상호명"].str.contains("파스쿠찌|잠바주스")].copy()
+print(df_bread.shape)
+
+
+# In[52]:
+
+
+# 브랜드명 컬럼을 만듭니다. "파리바게뜨" 에 해당되는 데이터에 대한 값을 채워줍니다.
+# 파리크라상에 대한 처리를 따로 해주세요!
+df_bread.loc[df_bread["상호명"].str.contains("파리바게"), "브랜드명"] = "파리바게뜨"
+df_bread.loc[df_bread["상호명"].str.contains("파리크라상"), "브랜드명"] = "파리바게뜨"
+df_bread[["상호명", "브랜드명"]].head()
+
+
+# In[53]:
+
+
+# 브랜드명 컬럼의 결측치는 "뚜레쥬르" 이기 때문에 fillna 를 사용해서 값을 채웁니다. 
+df_bread["브랜드명"] = df_bread["브랜드명"].fillna("뚜레쥬르")
+df_bread[["상호명", "브랜드명"]].head()                  
+
+
+# ### 범주형 변수 빈도수 계산하기
+
+# In[54]:
+
+
+# 브랜드명의 빈도수를 봅니다.
+df_bread["브랜드명"].value_counts()
+
+
+# In[55]:
+
+
+df_bread["브랜드명"].value_counts(normalize=True)
+
+
+# In[56]:
+
+
+# countplot 으로 브랜드명을 그려봅니다.
+sns.countplot(data=df_bread, x="브랜드명")
+
+
+# In[57]:
+
+
+# 시군구별로 브랜드명의 빈도수 차이를 비교합니다.
+plt.figure(figsize=(15, 4))
+sns.countplot(data=df_bread, x="시군구명", hue="브랜드명")
+
+
+# In[58]:
+
+
+# scatterplot 으로 위경도를 표현해 봅니다.
+sns.scatterplot(data=df_bread, x="경도", y="위도", hue="브랜드명")
+
+
+# In[59]:
+
+
+# jointplot 으로 위경도를 표현해 봅니다.
+sns.jointplot(data=df_bread, x="경도", y="위도", kind="hex")
+
+
+# ## 지도에 표현하기
+# ### Marker 로 위치를 찍어보기
+
+# In[60]:
+
+
+df_bread.index
+
+
+# In[61]:
+
+
+df_bread.loc[2935, "위도"]
+
+
+# In[62]:
+
+
+# for i in df_bread.index:
+#     print(i)
+
+
+# In[63]:
+
+
+# icon=folium.Icon(color=icon_color) 로 아이콘 컬러를 변경합니다.
+m = folium.Map([lat, long], zoom_start=12, tiles="stamen toner")
+
+for i in df_bread.index:
+    sub_lat = df_bread.loc[i, "위도"]
+    sub_long = df_bread.loc[i, "경도"]
+    title = df_bread.loc[i, "상호명"] + "-" + df_bread.loc[i, "도로명주소"]
+    
+    icon_color = "blue"
+    if df_bread.loc[i, "브랜드명"] == "뚜레쥬르":
+        icon_color = "green"
+        
+    folium.CircleMarker(
+        [sub_lat, sub_long],
+        radius=3,
+        color=icon_color, 
+        popup=f"<i>{title}/i>",
+        tooltip=title).add_to(m)
+    
+
+m.save('paris-tour.html')
+m
+
+
+# ### MarkerCluster 로 표현하기
+# * https://nbviewer.jupyter.org/github/python-visualization/folium/blob/master/examples/MarkerCluster.ipynb
+
+# In[64]:
+
+
+m = folium.Map([lat, long], zoom_start=12, tiles="stamen toner")
+marker_cluster = MarkerCluster().add_to(m)
+
+for i in df_bread.index:
+    sub_lat = df_bread.loc[i, "위도"]
+    sub_long = df_bread.loc[i, "경도"]
+    title = df_bread.loc[i, "상호명"] + "-" + df_bread.loc[i, "도로명주소"]
+    
+    icon_color = "blue"
+    if df_bread.loc[i, "브랜드명"] == "뚜레쥬르":
+        icon_color = "green"
+        
+    folium.Marker(
+        [sub_lat, sub_long],
+        icon=folium.Icon(color=icon_color),  
+        popup=f"<i>{title}/i>",
+        tooltip=title).add_to(marker_cluster)
+    
+
+m.save('paris-tour.html')
+m
+
+
+# ### Heatmap 으로 그리기
+# https://nbviewer.jupyter.org/github/python-visualization/folium/blob/master/examples/Heatmap.ipynb
+
+# In[65]:
+
+
+# heatmap 예제 이해하기
+data = (
+    np.random.normal(size=(100,3)) *
+    np.array([[1, 1, 1]]) +
+    np.array([[48, 5, 1]])
+).tolist()
+data[:5]
+
+
+# In[66]:
+
+
+# heatmap 예제와 같은 형태로 데이터 2차원 배열 만들기
+heat = df_bread[["위도", "경도", "브랜드명"]].copy()
+heat["브랜드명"] = heat["브랜드명"].replace("뚜레쥬르", 1).replace("파리바게뜨", 1)
+heat = heat.values
+
+
+# In[67]:
+
+
+heat[:5]
+
+
+# In[68]:
+
+
+# HeatMap 그리기
+from folium.plugins import HeatMap
+
+m = folium.Map([lat, long], tiles="stamentoner", zoom_start=12)
+    
+HeatMap(heat).add_to(m)
+
+m.save('Heatmap.html')
+m
+
+
+# In[69]:
+
+
+from folium.plugins import HeatMap
+
+m = folium.Map([lat, long], tiles="stamentoner", zoom_start=12)
+
+for i in df_bread.index:
+    sub_lat = df_bread.loc[i, "위도"]
+    sub_long = df_bread.loc[i, "경도"]
+    title = df_bread.loc[i, "상호명"] + "-" + df_bread.loc[i, "도로명주소"]
+    
+    icon_color = "blue"
+    if df_bread.loc[i, "브랜드명"] == "뚜레쥬르":
+        icon_color = "green"
+        
+    folium.CircleMarker(
+        [sub_lat, sub_long],
+        radius=3,
+        color=icon_color, 
+        popup=f"<i>{title}/i>",
+        tooltip=title).add_to(m)    
+
+HeatMap(heat).add_to(m)
+
+m.save('Heatmap.html')
+m
+
